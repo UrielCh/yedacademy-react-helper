@@ -33,12 +33,26 @@ export const update = async (editor?: Pick<vscode.TextEditor, "document">) => {
 
 export const yedaStart = () => {
   if (!panel) {
+    // const actif = vscode.window.activeTextEditor?.document;
+    // const dispo = vscode.window.onDidChangeActiveTextEditor((editor) => {
+    //   console.warn(`-------------------onDidChangeActiveTextEditor----------------actif:----------`);
+    //   // focus back on tsx doc
+    //   const actifs = vscode.window.tabGroups.all.filter(a => a.activeTab);
+    //   console.warn(actifs[0].activeTab?.label);
+    //   if (actifs[0].activeTab) {
+    //     vscode.window.showTextDocument(vscode.window.activeTextEditor.document);
+    //   }
+    //   // .forEach(a => a.tabs.forEach(b => b.editor.show()));
+    //   // console.warn(vscode.window.tabGroups.all.map(a => ({ "actif": a.activeTab, viewColumn: a.viewColumn, size:a.tabs.length})));
+    //   dispo.dispose();
+    // })
     panel = vscode.window.createWebviewPanel(
       "preview",
       "componant preview",
       vscode.ViewColumn.Beside,
       {},
     );
+    
     panel.onDidDispose(() => {
       panel = undefined;
       if (dispose) {
