@@ -25,6 +25,7 @@ export function getWebviewContent(props: ActionProps) {
   if (!img) {
     return `<!DOCTYPE html><body>no preview image for ${fileName}</body>`;
   }
+
   return `<!DOCTYPE html>
     <html lang="en">
     <head>
