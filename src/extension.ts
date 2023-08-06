@@ -1,17 +1,31 @@
 import * as vscode from "vscode";
-import { update, yedaStart } from "./yedaStart";
+import { getExistingPng, update, yedaStart } from "./yedaStart";
 
 export function activate(context: vscode.ExtensionContext) {
-  vscode.workspace.onDidOpenTextDocument((document: vscode.TextDocument) => {
-    // ['uri', 'fileName', 'isUntitled', 'languageId', 'version', 'isClosed', 'isDirty', 'save', 'getText', 'eol', 'lineCount', 'lineAt', 'offsetAt', 'positionAt', 'validateRange', 'validatePosition', 'getWordRangeAtPosition']
-    // console.log("->> onDidOpenTextDocument", Object.keys(document));
-    // console.log("->> document.fileName", document.fileName);
-    if (document.fileName.endsWith(".tsx")) {
-      // console.log("It's a tsx !!", document.fileName);
-      yedaStart();
-      // update({ document });
-    }
-  });
+  let prevGitUri = "";
+  vscode.workspace.onDidOpenTextDocument(
+    async (document: vscode.TextDocument) => {
+      // ['uri', 'fileName', 'isUntitled', 'languageId', 'version', 'isClosed', 'isDirty', 'save', 'getText', 'eol', 'lineCount', 'lineAt', 'offsetAt', 'positionAt', 'validateRange', 'validatePosition', 'getWordRangeAtPosition']
+      // console.log("->> onDidOpenTextDocument", Object.keys(document));
+      // console.log("->> document.fileName", document.fileName);
+      // console.log("languageId:", document.languageId);
+      const { scheme } = document.uri;
+      if (scheme === "git") {
+        prevGitUri = document.uri.path
+        return;
+      }
+      // if (prevGitUri && prevGitUri === document.uri.path) {
+      //   prevGitUri = "";
+      //   return;
+      // }
+      // console.log(document.uri);
+      // console.log("document.languageId", document.languageId);
+      const png = await getExistingPng(document.fileName);
+      if (png) {
+        yedaStart(png);
+      }
+    },
+  );
 
   // vscode.workspace.onDidChangeTextDocument(
   //   (event: vscode.TextDocumentChangeEvent) => {
