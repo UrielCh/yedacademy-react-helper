@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import * as fs from "fs";
 import { getWebviewContent } from "./actions";
+import * as path from "path";
 
 let panel: vscode.WebviewPanel | undefined = undefined;
 let dispose: vscode.Disposable | undefined = undefined;
@@ -14,6 +15,12 @@ export const getExistingPng = async (filePath: string): Promise<string> => {
     await fs.promises.access(png, fs.constants.R_OK);
     return png;
   } catch (e) {
+    const fileName = path.basename(filePath).replace(/\.tsx$/, ".png");
+    const parentpng = path.resolve(path.dirname(filePath), "..", fileName);
+    try {
+      await fs.promises.access(parentpng, fs.constants.R_OK);
+      return parentpng;
+    } catch (e) {}
     return "";
   }
 };
